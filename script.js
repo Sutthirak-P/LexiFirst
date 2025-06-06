@@ -1,3 +1,5 @@
+// --- เริ่มโค้ดที่ถูกต้อง ---
+
 const lessonSets = [
     {
         level: 1,
@@ -36,7 +38,7 @@ const lessonSets = [
     }
     // คุณครูสามารถเพิ่มชุดบทเรียน (Level) ต่อไปได้เรื่อยๆ ที่นี่
 ];
-// (ต่อจาก const lessonSets = [...];)
+
 
 // ตั้งค่า SpeechRecognition
 window.SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -63,13 +65,18 @@ let currentLevelIndex = 0;
 let currentItemIndex = 0;
 let correctAnswers = 0;
 let highestLevelUnlocked = 1;
+
 // ฟังก์ชันคำนวณความคล้ายคลึงของข้อความ (ให้คะแนน)
 function calculateSimilarity(str1, str2) {
-    const longer = str1.length > str2.length ? str1 : str2;
-    const shorter = str1.length > str2.length ? str2 : str1;
+    // ทำให้เป็นตัวพิมพ์เล็กและลบเครื่องหมายวรรคตอนบางส่วนเพื่อการเปรียบเทียบที่ง่ายขึ้น
+    let processedStr1 = str1.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+    let processedStr2 = str2.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
+
+    const longer = processedStr1.length > processedStr2.length ? processedStr1 : processedStr2;
+    const shorter = processedStr1.length > processedStr2.length ? processedStr2 : processedStr1;
     if (longer.length === 0) return 1.0;
-    const longerLength = longer.length;
     let editDistance = 0;
+    const longerLength = longer.length;
     for (let i = 0; i < shorter.length; i++) {
         if (shorter[i] !== longer[i]) {
             editDistance++;
@@ -104,6 +111,7 @@ function displayLevelSelection() {
         levelSelectionDiv.appendChild(button);
     });
 }
+
 // เริ่มต้นด่าน
 function startLevel(levelIndex) {
     currentLevelIndex = levelIndex;
@@ -163,12 +171,11 @@ function checkAnswer(spoken) {
     let expectedText = '';
 
     if (currentSet.type === 'vocab-spell') {
-        // สำหรับโหมดสะกด, เอามารวมกันไม่ต้องมีเว้นวรรค
         expectedText = (currentItem.word + currentItem.word.split('').join('')).toLowerCase();
         spoken = spoken.replace(/\s/g, '').toLowerCase();
     } else if (currentSet.type === 'read-sentence') {
-        expectedText = currentItem.text.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"");
-        spoken = spoken.toLowerCase();
+        expectedText = currentItem.text;
+        spoken = spoken; // ในส่วนนี้ไม่ต้องแปลงเป็นตัวพิมพ์เล็กทั้งหมดทันที เพื่อให้ฟังก์ชันคำนวณจัดการได้ดีกว่า
     } else if (currentSet.type === 'vocab-meaning') {
         expectedText = currentItem.thai;
         spoken = spoken.replace(/\s/g, '');
@@ -209,6 +216,12 @@ function finishLevel() {
     instructionP.textContent = "Level Complete!";
     promptText.textContent = `You got ${correctAnswers} out of ${totalItems} correct. (${finalScore.toFixed(0)}%)`;
 
+    // Clear existing buttons before adding new one
+    const existingBackButton = feedbackText.querySelector('button');
+    if (existingBackButton) {
+        existingBackButton.remove();
+    }
+
     if (finalScore >= currentSet.passingScore) {
         feedbackText.textContent = "Congratulations! You've passed this level.";
         feedbackText.style.color = 'blue';
@@ -222,16 +235,19 @@ function finishLevel() {
         feedbackText.style.color = 'orange';
     }
     
-    // เพิ่มปุ่มกลับไปหน้าเลือกด่าน
     const backButton = document.createElement('button');
     backButton.textContent = 'Back to Level Selection';
     backButton.onclick = () => {
         practiceAreaDiv.classList.add('hidden');
         levelSelectionDiv.classList.remove('hidden');
+        nextLevelBtn.classList.add('hidden'); // ซ่อนปุ่ม next level ด้วย
         displayLevelSelection();
     };
+    // ใช้ appendChild เพื่อต่อท้ายข้อความ
+    feedbackText.appendChild(document.createElement('br'));
     feedbackText.appendChild(backButton);
 }
+
 // สั่งให้ AI เริ่มฟังเมื่อกดปุ่ม
 startBtn.onclick = () => {
     feedbackText.textContent = "Listening...";
@@ -250,9 +266,11 @@ nextLevelBtn.onclick = () => {
 };
 
 // เริ่มต้นแอปทั้งหมด
-functioninitializeApp() {
+function initializeApp() {
     loadProgress();
     displayLevelSelection();
 }
 
 initializeApp();
+
+// --- จบโค้ดที่ถูกต้อง ---
