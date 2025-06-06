@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Practice App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>English Practice App</h1>
+        <div id="level-selection">
+            <h2>Choose a Level</h2>
+            </div>
+
+        <div id="practice-area" class="hidden">
+            <h2 id="level-title"></h2>
+            <div id="prompt-area">
+                <p id="instruction"></p>
+                <h3 id="prompt-text"></h3>
+            </div>
+            <button id="start-btn">Start Listening</button>
+            <div id="result-area">
+                <p>What I heard: <span id="spoken-text">-</span></p>
+                <p>Accuracy: <span id="score-text">-</span></p>
+                <p id="feedback-text"></p>
+            </div>
+            <div id="progress-bar-container">
+                <div id="progress-bar"></div>
+            </div>
+            <p id="progress-label"></p>
+            <button id="next-level-btn" class="hidden">Next Level</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
